@@ -33,6 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_TERRAFORM_TERRASCAN: false
           VALIDATE_TERRAFORM_CHECKOV: false
+          VALIDATE_CHECKOV: false
           VALIDATE_JSCPD: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_YAML_PRETTIER: false

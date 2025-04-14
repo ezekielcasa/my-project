@@ -1,36 +1,33 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+---
+name: Lint
 
-name: .NET
+on: # yamllint disable-line rule:truthy
+  push: null
+  pull_request: null
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+permissions: {}
 
 jobs:
   build:
+    name: Lint
+    runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest    
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
 
-    - name: Build and push docker image
-      uses: mr-smithers-excellent/docker-build-push@v6
-      with:
-        image: docker-hub-repo/image-name
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Super-linter
+        uses: super-linter/super-linter@v7.3.0 # x-release-please-version
+        env:
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
